@@ -125,60 +125,59 @@ public class Solver {
     }
 
     public String bruteForceSolve () {
-        StringBuilder s=new StringBuilder();
+        HashSet<Character> letters=new HashSet<>();
         for (int i=0; i<3; i++) {
-            s.append(left[i]);
+            letters.add(left[i]);
         }
         for (int i=0; i<3; i++) {
-            s.append(right[i]);
+            letters.add(right[i]);
         }
         for (int i=0; i<3; i++) {
-            s.append(up[i]);
+            letters.add(up[i]);
         }
         for (int i=0; i<3; i++) {
-            s.append(down[i]);
+            letters.add(down[i]);
         }
-        String letters=s.toString();
-        String copy=letters;
-        StringBuilder answer= new StringBuilder();
 
         for (String a: dictionary) {
+            String firstAnswer=a;
+            HashSet<Character> firstLetters=letters;
             for (int i=0; i<a.length(); i++) {
-                letters=letters.replaceAll(a.charAt(i)+"", "");
-                answer.append(a);
+                firstLetters.remove(a.charAt(i));
             }
             for (String b: dictionary) {
+                String secondAnswer=firstAnswer+", "+b;
+                HashSet<Character> secondLetters=firstLetters;
                 if (b.charAt(0)==a.charAt(a.length()-1)) {
                     for (int i=0; i<b.length(); i++) {
-                        letters=letters.replaceAll(b.charAt(i)+"", "");
-                        answer.append(", ").append(b);
+                        secondLetters.remove(b.charAt(i));
                     }
                 }
                 for (String c: dictionary) {
+                    String thirdAnswer=secondAnswer+", "+c;
+                    HashSet<Character> thirdLetters=secondLetters;
                     if (c.charAt(0)==b.charAt(b.length()-1)) {
                         for (int i=0; i<c.length(); i++) {
-                            letters=letters.replaceAll(c.charAt(i)+"", "");
-                            answer.append(", ").append(c);
+                            thirdLetters.remove(c.charAt(i));
                         }
                     }
                     for (String d: dictionary) {
-                        if (c.charAt(0)==d.charAt(d.length()-1)) {
-                            String temp=letters;
+                        String fourthAnswer=thirdAnswer+", "+d;
+                        HashSet<Character> fourthLetters=thirdLetters;
+                        if (d.charAt(0)==c.charAt(c.length()-1)) {
                             for (int i=0; i<d.length(); i++) {
-                                temp=temp.replaceAll(d.charAt(i)+"", "");
-                                if (temp.equals("")) {
-                                    answer.append(", ").append(d);
-                                    return answer.toString();
-                                }
-                                temp=letters;
+                                fourthLetters.remove(d.charAt(i));
+                            }
+                            if (fourthLetters.isEmpty()) {
+                                System.out.println("test");
+                                return fourthAnswer;
                             }
                         }
-                        //go back one up each with unaltered version
                     }
                 }
             }
         }
-        return null;
+        return "No Solutions.";
     }
 
     public String lengthSolve() {
@@ -198,6 +197,7 @@ public class Solver {
 //        System.out.println(solver.words.isWord("crl"));
 //        solver.words.print();
         solver.findWords();
+        solver.bruteForceSolve();
     }
 }
 
