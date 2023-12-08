@@ -23,14 +23,10 @@ public class Solver {
 //        }
         dictionary=new HashSet();
         words = new Trie();
-//        left = new char[3];
-//        right = new char[3];
-//        up = new char[3];
-//        down = new char[3];
-        left = new char[] {'c', 'i', 'l'};
-        right = new char[] {'k', 'f', 'r'};;
-        up = new char[] {'g', 'p', 't'};;
-        down = new char[] {'n', 'u', 'e'};;
+        left = new char[3];
+        right = new char[3];
+        up = new char[3];
+        down = new char[3];
     }
 
     public void load() throws FileNotFoundException {
@@ -49,40 +45,40 @@ public class Solver {
         String command = "";
 
         System.out.println("Left:");
-        command = scan.nextLine();
+        command = scan.nextLine().toLowerCase();
         while (!command.matches("^[A-Za-z]{3}$")) {
             System.out.println("Entries must be 3 letters. Try again.");
-            command = scan.nextLine();
+            command = scan.nextLine().toLowerCase();
         }
         for (int i=0; i<3; i++) {
             left[i]=command.charAt(i);
         }
 
         System.out.println("Right:");
-        command = scan.nextLine();
+        command = scan.nextLine().toLowerCase();
         while (!command.matches("^[A-Za-z]{3}$")) {
             System.out.println("Entries must be 3 letters. Try again.");
-            command = scan.nextLine();
+            command = scan.nextLine().toLowerCase();
         }
         for (int i=0; i<3; i++) {
             right[i]=command.charAt(i);
         }
 
         System.out.println("Up:");
-        command = scan.nextLine();
+        command = scan.nextLine().toLowerCase();
         while (!command.matches("^[A-Za-z]{3}$")) {
             System.out.println("Entries must be 3 letters. Try again.");
-            command = scan.nextLine();
+            command = scan.nextLine().toLowerCase();
         }
         for (int i=0; i<3; i++) {
             up[i]=command.charAt(i);
         }
 
         System.out.println("Down:");
-        command = scan.nextLine();
+        command = scan.nextLine().toLowerCase();
         while (!command.matches("^[A-Za-z]{3}$")) {
             System.out.println("Entries must be 3 letters. Try again.");
-            command = scan.nextLine();
+            command = scan.nextLine().toLowerCase();
         }
         for (int i=0; i<3; i++) {
             down[i]=command.charAt(i);
@@ -123,7 +119,6 @@ public class Solver {
         }
         return null;
     }
-
     public String bruteForceSolve () {
         HashSet<Character> letters=new HashSet<>();
         for (int i=0; i<3; i++) {
@@ -140,37 +135,41 @@ public class Solver {
         }
 
         for (String a: dictionary) {
-            String firstAnswer=a;
-            HashSet<Character> firstLetters=letters;
+            HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
             for (int i=0; i<a.length(); i++) {
                 firstLetters.remove(a.charAt(i));
             }
-            for (String b: dictionary) {
-                String secondAnswer=firstAnswer+", "+b;
-                HashSet<Character> secondLetters=firstLetters;
+            HashSet<String> secondDictionary=(HashSet<String>) dictionary.clone();
+            secondDictionary.remove(a);
+            for (String b: secondDictionary) {
+                String secondAnswer=a+", "+b;
+                HashSet<Character> secondLetters=(HashSet<Character>) firstLetters.clone();
                 if (b.charAt(0)==a.charAt(a.length()-1)) {
                     for (int i=0; i<b.length(); i++) {
                         secondLetters.remove(b.charAt(i));
                     }
-                }
-                for (String c: dictionary) {
-                    String thirdAnswer=secondAnswer+", "+c;
-                    HashSet<Character> thirdLetters=secondLetters;
-                    if (c.charAt(0)==b.charAt(b.length()-1)) {
-                        for (int i=0; i<c.length(); i++) {
-                            thirdLetters.remove(c.charAt(i));
-                        }
-                    }
-                    for (String d: dictionary) {
-                        String fourthAnswer=thirdAnswer+", "+d;
-                        HashSet<Character> fourthLetters=thirdLetters;
-                        if (d.charAt(0)==c.charAt(c.length()-1)) {
-                            for (int i=0; i<d.length(); i++) {
-                                fourthLetters.remove(d.charAt(i));
+                    HashSet<String> thirdDictionary=(HashSet<String>) secondDictionary.clone();
+                    thirdDictionary.remove(b);
+                    for (String c: thirdDictionary) {
+                        String thirdAnswer=secondAnswer+", "+c;
+                        HashSet<Character> thirdLetters=(HashSet<Character>) secondLetters.clone();
+                        if (c.charAt(0)==b.charAt(b.length()-1)) {
+                            for (int i=0; i<c.length(); i++) {
+                                thirdLetters.remove(c.charAt(i));
                             }
-                            if (fourthLetters.isEmpty()) {
-                                System.out.println("test");
-                                return fourthAnswer;
+                            HashSet<String> fourthDictionary=(HashSet<String>) thirdDictionary.clone();
+                            fourthDictionary.remove(c);
+                            for (String d: fourthDictionary) {
+                                String fourthAnswer=thirdAnswer+", "+d;
+                                HashSet<Character> fourthLetters=(HashSet<Character>) thirdLetters.clone();
+                                if (d.charAt(0)==c.charAt(c.length()-1)) {
+                                    for (int i=0; i<d.length(); i++) {
+                                        fourthLetters.remove(d.charAt(i));
+                                    }
+                                    if (fourthLetters.isEmpty()) {
+                                        return fourthAnswer;
+                                    }
+                                }
                             }
                         }
                     }
@@ -192,12 +191,10 @@ public class Solver {
 
     public static void main(String[] args) throws FileNotFoundException {
         Solver solver = new Solver();
-//        solver.enterLetters();
+        solver.enterLetters();
         solver.load();
-//        System.out.println(solver.words.isWord("crl"));
-//        solver.words.print();
         solver.findWords();
-        solver.bruteForceSolve();
+        System.out.println(solver.bruteForceSolve());
     }
 }
 
