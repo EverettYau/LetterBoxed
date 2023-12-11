@@ -1,13 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.util.*;
 
 public class Solver {
 //    private HashMap letters;
     private HashSet<String> dictionary;
+    private HashMap<Character, LinkedList<String>> betterDictionary;
     private Trie words;
     private char[] left;
     private char[] right;
@@ -15,18 +13,22 @@ public class Solver {
     private char[] down;
 
     public Solver() {
-//make a hashmap with all the letters and their frequencies
-//        String alphabet="abcdefghijklmnopqrstuzwxyz";
-//        letters=new HashMap();
-//        for (int i=0; i<alphabet.length(); i++) {
-//            letters.put(alphabet.charAt(i), i);
-//        }
-        dictionary=new HashSet();
+        String alphabet="abcdefghijklmnopqrstuzwxyz";
+        dictionary=new HashSet<>();
+        betterDictionary=new HashMap<>();
+        for (int i=0; i<alphabet.length(); i++) {
+            betterDictionary.put(alphabet.charAt(i), new LinkedList<>());
+        }
         words = new Trie();
-        left = new char[3];
-        right = new char[3];
-        up = new char[3];
-        down = new char[3];
+//        left = new char[3];
+//        right = new char[3];
+//        up = new char[3];
+//        down = new char[3];
+        left = new char[] {'p', 'h', 'r'};
+        right = new char[] {'a', 'c', 'k'};
+        up = new char[] {'g', 'm', 't'};
+        down = new char[] {'e', 'i', 'o'};
+        //phr ack gmt eio
     }
 
     public void load() throws FileNotFoundException {
@@ -95,6 +97,7 @@ public class Solver {
         }
         if (words.isWord(str)==1) {
             dictionary.add(str);
+            betterDictionary.get(str.charAt(0)).add(str);
         }
 
         if (!arr.equals("left")) {
@@ -179,6 +182,68 @@ public class Solver {
         return "No Solutions.";
     }
 
+    public String betterBruteForceSolve () {
+        HashSet<Character> letters=new HashSet<>();
+        for (int i=0; i<3; i++) {
+            letters.add(left[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(right[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(up[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(down[i]);
+        }
+        //is hashmap correct
+        //more information about linked list iterating through
+        for (String a: dictionary) {
+            HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
+            for (int i=0; i<a.length(); i++) {
+                firstLetters.remove(a.charAt(i));
+            }
+            HashMap<Character, LinkedList<String>> secondDictionary=(HashMap<Character, LinkedList<String>>) betterDictionary.clone();
+            secondDictionary.get(a.charAt(0)).remove(a);
+            Queue<String> firstValues=secondDictionary.get(a.charAt(a.length()-1));
+            while (firstValues.peek()!=null) {
+                String b=firstValues.poll();
+                System.out.println(b);
+                String secondAnswer=a+", "+b;
+                HashSet<Character> secondLetters=(HashSet<Character>) firstLetters.clone();
+                for (int i=0; i<b.length(); i++) {
+                    secondLetters.remove(b.charAt(i));
+                }
+                HashMap<Character, LinkedList<String>> thirdDictionary=(HashMap<Character, LinkedList<String>>) secondDictionary.clone();
+                thirdDictionary.get(b.charAt(0)).remove(b);
+                Queue<String> secondValues=thirdDictionary.get(b.charAt(b.length()-1));
+                while (secondValues.peek()!=null) {
+                    String c=secondValues.poll();
+                    String thirdAnswer=secondAnswer+", "+c;
+                    HashSet<Character> thirdLetters=(HashSet<Character>) secondLetters.clone();
+                    for (int i=0; i<c.length(); i++) {
+                        thirdLetters.remove(c.charAt(i));
+                    }
+                    HashMap<Character, LinkedList<String>> fourthDictionary=(HashMap<Character, LinkedList<String>>) thirdDictionary.clone();
+                    fourthDictionary.get(c.charAt(0)).remove(c);
+                    Queue<String> thirdValues=fourthDictionary.get(c.charAt(c.length()-1));
+                    while (thirdValues.peek()!=null) {
+                        String d=thirdValues.poll();
+                        String fourthAnswer=thirdAnswer+", "+d;
+                        HashSet<Character> fourthLetters=(HashSet<Character>) thirdLetters.clone();
+                        for (int i=0; i<d.length(); i++) {
+                            fourthLetters.remove(d.charAt(i));
+                        }
+                        if (fourthLetters.isEmpty()) {
+                            return fourthAnswer;
+                        }
+                    }
+                }
+            }
+        }
+        return "No Solutions.";
+    }
+
     public String lengthSolve() {
         return null;
     }
@@ -191,10 +256,10 @@ public class Solver {
 
     public static void main(String[] args) throws FileNotFoundException {
         Solver solver = new Solver();
-        solver.enterLetters();
+//        solver.enterLetters();
         solver.load();
         solver.findWords();
-        System.out.println(solver.bruteForceSolve());
+        System.out.println(solver.betterBruteForceSolve());
     }
 }
 

@@ -3644,7 +3644,6 @@ combatted
 combe
 martin
 comet
-cometh
 comets
 commandeer
 commanders
@@ -7242,7 +7241,6 @@ maroon
 marring
 marshmallows
 marsupial
-martech
 martin
 martina
 martine
@@ -10359,8 +10357,6 @@ talladega
 tallahassee
 tambourine
 tamer
-tampa
-bay
 tampax
 tampers
 tan
