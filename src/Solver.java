@@ -1,11 +1,13 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.PriorityQueue;
 
 public class Solver {
 //    private HashMap letters;
     private HashSet<String> dictionary;
     private HashMap<Character, LinkedList<String>> betterDictionary;
+    private HashMap<Character, PriorityQueue<LengthString>> lengthDictionary;
     private Trie words;
     private char[] left;
     private char[] right;
@@ -14,11 +16,15 @@ public class Solver {
 
     public Solver() {
         String alphabet="abcdefghijklmnopqrstuzwxyz";
+        //default dictionary
         dictionary=new HashSet<>();
+        //dictionary for betterBruteForceSolve()
         betterDictionary=new HashMap<>();
         for (int i=0; i<alphabet.length(); i++) {
             betterDictionary.put(alphabet.charAt(i), new LinkedList<>());
         }
+        //dictionary for lengthSolve()
+        lengthDictionary=new HashMap<>();
         words = new Trie();
 //        left = new char[3];
 //        right = new char[3];
@@ -122,6 +128,8 @@ public class Solver {
         }
         return null;
     }
+
+
     public String bruteForceSolve () {
         HashSet<Character> letters=new HashSet<>();
         for (int i=0; i<3; i++) {
