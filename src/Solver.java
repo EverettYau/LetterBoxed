@@ -196,7 +196,6 @@ public class Solver {
         for (int i=0; i<3; i++) {
             letters.add(down[i]);
         }
-        //is hashmap correct
         //more information about linked list iterating through
         for (String a: dictionary) {
             HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
@@ -204,17 +203,22 @@ public class Solver {
                 firstLetters.remove(a.charAt(i));
             }
             HashMap<Character, LinkedList<String>> secondDictionary=(HashMap<Character, LinkedList<String>>) betterDictionary.clone();
+            for (Character k: secondDictionary.keySet()) {
+                secondDictionary.put(k, new LinkedList<>(secondDictionary.get(k)));
+            }
             secondDictionary.get(a.charAt(0)).remove(a);
             Queue<String> firstValues=secondDictionary.get(a.charAt(a.length()-1));
             while (firstValues.peek()!=null) {
                 String b=firstValues.poll();
-                System.out.println(b);
                 String secondAnswer=a+", "+b;
                 HashSet<Character> secondLetters=(HashSet<Character>) firstLetters.clone();
                 for (int i=0; i<b.length(); i++) {
                     secondLetters.remove(b.charAt(i));
                 }
                 HashMap<Character, LinkedList<String>> thirdDictionary=(HashMap<Character, LinkedList<String>>) secondDictionary.clone();
+                for (Character k: thirdDictionary.keySet()) {
+                    thirdDictionary.put(k, new LinkedList<>(thirdDictionary.get(k)));
+                }
                 thirdDictionary.get(b.charAt(0)).remove(b);
                 Queue<String> secondValues=thirdDictionary.get(b.charAt(b.length()-1));
                 while (secondValues.peek()!=null) {
@@ -225,6 +229,9 @@ public class Solver {
                         thirdLetters.remove(c.charAt(i));
                     }
                     HashMap<Character, LinkedList<String>> fourthDictionary=(HashMap<Character, LinkedList<String>>) thirdDictionary.clone();
+                    for (Character k: fourthDictionary.keySet()) {
+                        fourthDictionary.put(k, new LinkedList<>(fourthDictionary.get(k)));
+                    }
                     fourthDictionary.get(c.charAt(0)).remove(c);
                     Queue<String> thirdValues=fourthDictionary.get(c.charAt(c.length()-1));
                     while (thirdValues.peek()!=null) {
