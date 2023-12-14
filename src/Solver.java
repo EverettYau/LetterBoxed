@@ -15,7 +15,7 @@ public class Solver {
     private char[] down;
 
     public Solver() {
-        String alphabet="abcdefghijklmnopqrstuzwxyz";
+        String alphabet="abcdefghijklmnopqrstuvwxyz";
         //default dictionary
         dictionary=new HashSet<>();
         //dictionary for betterBruteForceSolve()
@@ -25,6 +25,11 @@ public class Solver {
         }
         //dictionary for lengthSolve()
         lengthDictionary=new HashMap<>();
+        for (int i=0; i<alphabet.length(); i++) {
+            lengthDictionary.put(alphabet.charAt(i), new PriorityQueue<>());
+        }
+
+        //letters
         words = new Trie();
 //        left = new char[3];
 //        right = new char[3];
@@ -35,6 +40,7 @@ public class Solver {
         up = new char[] {'g', 'm', 't'};
         down = new char[] {'e', 'i', 'o'};
         //phr ack gmt eio
+        //dcm ano ive prl
     }
 
     public void load() throws FileNotFoundException {
@@ -129,7 +135,6 @@ public class Solver {
         return null;
     }
 
-
     public String bruteForceSolve () {
         HashSet<Character> letters=new HashSet<>();
         for (int i=0; i<3; i++) {
@@ -204,16 +209,13 @@ public class Solver {
         for (int i=0; i<3; i++) {
             letters.add(down[i]);
         }
-        //more information about linked list iterating through
         for (String a: dictionary) {
             HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
             for (int i=0; i<a.length(); i++) {
                 firstLetters.remove(a.charAt(i));
             }
             HashMap<Character, LinkedList<String>> secondDictionary=(HashMap<Character, LinkedList<String>>) betterDictionary.clone();
-            for (Character k: secondDictionary.keySet()) {
-                secondDictionary.put(k, new LinkedList<>(secondDictionary.get(k)));
-            }
+            secondDictionary.replaceAll((k, v) -> new LinkedList<>(v));
             secondDictionary.get(a.charAt(0)).remove(a);
             Queue<String> firstValues=secondDictionary.get(a.charAt(a.length()-1));
             while (firstValues.peek()!=null) {
@@ -224,9 +226,7 @@ public class Solver {
                     secondLetters.remove(b.charAt(i));
                 }
                 HashMap<Character, LinkedList<String>> thirdDictionary=(HashMap<Character, LinkedList<String>>) secondDictionary.clone();
-                for (Character k: thirdDictionary.keySet()) {
-                    thirdDictionary.put(k, new LinkedList<>(thirdDictionary.get(k)));
-                }
+                thirdDictionary.replaceAll((k, v) -> new LinkedList<>(v));
                 thirdDictionary.get(b.charAt(0)).remove(b);
                 Queue<String> secondValues=thirdDictionary.get(b.charAt(b.length()-1));
                 while (secondValues.peek()!=null) {
@@ -237,9 +237,7 @@ public class Solver {
                         thirdLetters.remove(c.charAt(i));
                     }
                     HashMap<Character, LinkedList<String>> fourthDictionary=(HashMap<Character, LinkedList<String>>) thirdDictionary.clone();
-                    for (Character k: fourthDictionary.keySet()) {
-                        fourthDictionary.put(k, new LinkedList<>(fourthDictionary.get(k)));
-                    }
+                    fourthDictionary.replaceAll((k, v) -> new LinkedList<>(v));
                     fourthDictionary.get(c.charAt(0)).remove(c);
                     Queue<String> thirdValues=fourthDictionary.get(c.charAt(c.length()-1));
                     while (thirdValues.peek()!=null) {
@@ -259,13 +257,89 @@ public class Solver {
         return "No Solutions.";
     }
 
+    //problem could be that it adds the same thing to itself when reinitializing
+    //delete the duplications maybe
     public String lengthSolve() {
-        return null;
-    }
-    public void frequencySolve() {
+        HashSet<Character> letters=new HashSet<>();
+        for (int i=0; i<3; i++) {
+            letters.add(left[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(right[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(up[i]);
+        }
+        for (int i=0; i<3; i++) {
+            letters.add(down[i]);
+        }
+        for (Character z: lengthDictionary.keySet()) {
+            //first word
+            PriorityQueue<LengthString> firstValues=lengthDictionary.get(z);
+            while (firstValues.peek()!=null) {
+                LengthString aNode=firstValues.poll();
+                String a=aNode.label;
+                HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
+                for (int i=0; i<a.length(); i++) {
+                    firstLetters.remove(a.charAt(i));
+                }
+                HashMap<Character, PriorityQueue<LengthString>> secondDictionary=(HashMap<Character, PriorityQueue<LengthString>>) lengthDictionary.clone();
+                for (Character k: secondDictionary.keySet()) {
+                    secondDictionary.put(k, new PriorityQueue<>(secondDictionary.get(k)));
+                }
+                secondDictionary.get(a.charAt(0)).remove(aNode);
 
+                //second word
+                PriorityQueue<LengthString> secondValues=secondDictionary.get(a.charAt(a.length()-1));
+                while (secondValues.peek()!=null) {
+                    LengthString bNode=secondValues.poll();
+                    String b=bNode.label;
+                    String secondAnswer=a+", "+b;
+                    HashSet<Character> secondLetters=(HashSet<Character>) firstLetters.clone();
+                    for (int i=0; i<b.length(); i++) {
+                        secondLetters.remove(b.charAt(i));
+                    }
+                    HashMap<Character, PriorityQueue<LengthString>> thirdDictionary=(HashMap<Character, PriorityQueue<LengthString>>) secondDictionary.clone();
+                    for (Character k: thirdDictionary.keySet()) {
+                        thirdDictionary.put(k, new PriorityQueue<>(thirdDictionary.get(k)));
+                    }
+                    thirdDictionary.get(b.charAt(0)).remove(bNode);
+                    //third word
+                    PriorityQueue<LengthString> thirdValues=thirdDictionary.get(b.charAt(b.length()-1));
+                    while (thirdValues.peek()!=null) {
+                        LengthString cNode=thirdValues.poll();
+                        String c=cNode.label;
+                        String thirdAnswer=secondAnswer+", "+c;
+                        HashSet<Character> thirdLetters=(HashSet<Character>) secondLetters.clone();
+                        for (int i=0; i<c.length(); i++) {
+                            thirdLetters.remove(c.charAt(i));
+                        }
+                        HashMap<Character, PriorityQueue<LengthString>> fourthDictionary= (HashMap<Character, PriorityQueue<LengthString>>) thirdDictionary.clone();
+                        for (Character k: fourthDictionary.keySet()) {
+                            fourthDictionary.put(k, new PriorityQueue<>(fourthDictionary.get(k)));
+                        }
+                        fourthDictionary.get(c.charAt(0)).remove(cNode);
+                        //fourth word
+                        PriorityQueue<LengthString> fourthValues=fourthDictionary.get(c.charAt(c.length()-1));
+                        while (fourthValues.peek()!=null) {
+                            String d=fourthValues.poll().label;
+                            String fourthAnswer=thirdAnswer+", "+d;
+                            HashSet<Character> fourthLetters=(HashSet<Character>) thirdLetters.clone();
+                            for (int i=0; i<d.length(); i++) {
+                                fourthLetters.remove(d.charAt(i));
+                            }
+                            if (fourthLetters.isEmpty()) {
+                                return fourthAnswer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return "No Solutions.";
     }
-    public void betterFrequencySolve() {
+
+    public void frequencySolve() {
 
     }
 
@@ -274,7 +348,8 @@ public class Solver {
 //        solver.enterLetters();
         solver.load();
         solver.findWords();
-        System.out.println(solver.betterBruteForceSolve());
+//        System.out.println(solver.betterBruteForceSolve());
+        System.out.println(solver.lengthSolve());
     }
 }
 

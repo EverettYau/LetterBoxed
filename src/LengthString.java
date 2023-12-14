@@ -9,6 +9,6 @@ public class LengthString implements Comparable<LengthString> {
 
     @Override
     public int compareTo(LengthString s) {
-        return this.length - s.length;
+        return s.length-this.length;
     }
 }
