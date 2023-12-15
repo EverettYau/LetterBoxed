@@ -110,6 +110,7 @@ public class Solver {
         if (words.isWord(str)==1) {
             dictionary.add(str);
             betterDictionary.get(str.charAt(0)).add(str);
+            lengthDictionary.get(str.charAt(0)).add(new LengthString(str));
         }
 
         if (!arr.equals("left")) {
@@ -257,8 +258,6 @@ public class Solver {
         return "No Solutions.";
     }
 
-    //problem could be that it adds the same thing to itself when reinitializing
-    //delete the duplications maybe
     public String lengthSolve() {
         HashSet<Character> letters=new HashSet<>();
         for (int i=0; i<3; i++) {
@@ -273,24 +272,25 @@ public class Solver {
         for (int i=0; i<3; i++) {
             letters.add(down[i]);
         }
-        for (Character z: lengthDictionary.keySet()) {
+        for (Character z: letters) {
             //first word
             PriorityQueue<LengthString> firstValues=lengthDictionary.get(z);
             while (firstValues.peek()!=null) {
                 LengthString aNode=firstValues.poll();
                 String a=aNode.label;
+                System.out.println(a);
                 HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
                 for (int i=0; i<a.length(); i++) {
                     firstLetters.remove(a.charAt(i));
                 }
-                HashMap<Character, PriorityQueue<LengthString>> secondDictionary=(HashMap<Character, PriorityQueue<LengthString>>) lengthDictionary.clone();
-                for (Character k: secondDictionary.keySet()) {
-                    secondDictionary.put(k, new PriorityQueue<>(secondDictionary.get(k)));
-                }
-                secondDictionary.get(a.charAt(0)).remove(aNode);
+//                HashMap<Character, PriorityQueue<LengthString>> secondDictionary=(HashMap<Character, PriorityQueue<LengthString>>) lengthDictionary.clone();
+//                for (Character k: secondDictionary.keySet()) {
+//                    secondDictionary.put(k, new PriorityQueue<>(secondDictionary.get(k)));
+//                }
+//                secondDictionary.get(a.charAt(0)).remove(aNode);
 
                 //second word
-                PriorityQueue<LengthString> secondValues=secondDictionary.get(a.charAt(a.length()-1));
+                PriorityQueue<LengthString> secondValues=lengthDictionary.get(a.charAt(a.length()-1));
                 while (secondValues.peek()!=null) {
                     LengthString bNode=secondValues.poll();
                     String b=bNode.label;
@@ -299,13 +299,13 @@ public class Solver {
                     for (int i=0; i<b.length(); i++) {
                         secondLetters.remove(b.charAt(i));
                     }
-                    HashMap<Character, PriorityQueue<LengthString>> thirdDictionary=(HashMap<Character, PriorityQueue<LengthString>>) secondDictionary.clone();
-                    for (Character k: thirdDictionary.keySet()) {
-                        thirdDictionary.put(k, new PriorityQueue<>(thirdDictionary.get(k)));
-                    }
-                    thirdDictionary.get(b.charAt(0)).remove(bNode);
+//                    HashMap<Character, PriorityQueue<LengthString>> thirdDictionary=(HashMap<Character, PriorityQueue<LengthString>>) secondDictionary.clone();
+//                    for (Character k: thirdDictionary.keySet()) {
+//                        thirdDictionary.put(k, new PriorityQueue<>(thirdDictionary.get(k)));
+//                    }
+//                    thirdDictionary.get(b.charAt(0)).remove(bNode);
                     //third word
-                    PriorityQueue<LengthString> thirdValues=thirdDictionary.get(b.charAt(b.length()-1));
+                    PriorityQueue<LengthString> thirdValues=lengthDictionary.get(b.charAt(b.length()-1));
                     while (thirdValues.peek()!=null) {
                         LengthString cNode=thirdValues.poll();
                         String c=cNode.label;
@@ -314,13 +314,13 @@ public class Solver {
                         for (int i=0; i<c.length(); i++) {
                             thirdLetters.remove(c.charAt(i));
                         }
-                        HashMap<Character, PriorityQueue<LengthString>> fourthDictionary= (HashMap<Character, PriorityQueue<LengthString>>) thirdDictionary.clone();
-                        for (Character k: fourthDictionary.keySet()) {
-                            fourthDictionary.put(k, new PriorityQueue<>(fourthDictionary.get(k)));
-                        }
-                        fourthDictionary.get(c.charAt(0)).remove(cNode);
+//                        HashMap<Character, PriorityQueue<LengthString>> fourthDictionary= (HashMap<Character, PriorityQueue<LengthString>>) thirdDictionary.clone();
+//                        for (Character k: fourthDictionary.keySet()) {
+//                            fourthDictionary.put(k, new PriorityQueue<>(fourthDictionary.get(k)));
+//                        }
+//                        fourthDictionary.get(c.charAt(0)).remove(cNode);
                         //fourth word
-                        PriorityQueue<LengthString> fourthValues=fourthDictionary.get(c.charAt(c.length()-1));
+                        PriorityQueue<LengthString> fourthValues=lengthDictionary.get(c.charAt(c.length()-1));
                         while (fourthValues.peek()!=null) {
                             String d=fourthValues.poll().label;
                             String fourthAnswer=thirdAnswer+", "+d;
