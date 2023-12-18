@@ -1396,7 +1396,6 @@ anglers
 anglia
 anglian
 angling
-angmering
 angola
 angostura
 angrier
@@ -1701,7 +1700,6 @@ are
 area
 areas
 aretha
-argentina
 argentine
 argentinian
 argonaut

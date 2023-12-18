@@ -31,16 +31,22 @@ public class Solver {
 
         //letters
         words = new Trie();
-//        left = new char[3];
-//        right = new char[3];
-//        up = new char[3];
-//        down = new char[3];
-        left = new char[] {'p', 'h', 'r'};
-        right = new char[] {'a', 'c', 'k'};
-        up = new char[] {'g', 'm', 't'};
-        down = new char[] {'e', 'i', 'o'};
+        left = new char[3];
+        right = new char[3];
+        up = new char[3];
+        down = new char[3];
+//        left = new char[] {'p', 'h', 'r'};
+//        right = new char[] {'a', 'c', 'k'};
+//        up = new char[] {'g', 'm', 't'};
+//        down = new char[] {'e', 'i', 'o'};
         //phr ack gmt eio
         //dcm ano ive prl
+        //wbi pkh tra eon
+//        left = new char[] {'w', 'b', 'i'};
+//        right = new char[] {'p', 'k', 'h'};
+//        up = new char[] {'t', 'r', 'a'};
+//        down = new char[] {'e', 'o', 'n'};
+        //gut ami xnr elv
     }
 
     public void load() throws FileNotFoundException {
@@ -278,7 +284,7 @@ public class Solver {
             while (firstValues.peek()!=null) {
                 LengthString aNode=firstValues.poll();
                 String a=aNode.label;
-                System.out.println(a);
+                System.out.println("First word: "+a);
                 HashSet<Character> firstLetters=(HashSet<Character>) letters.clone();
                 for (int i=0; i<a.length(); i++) {
                     firstLetters.remove(a.charAt(i));
@@ -290,10 +296,11 @@ public class Solver {
 //                secondDictionary.get(a.charAt(0)).remove(aNode);
 
                 //second word
-                PriorityQueue<LengthString> secondValues=lengthDictionary.get(a.charAt(a.length()-1));
+                PriorityQueue<LengthString> secondValues=new PriorityQueue<> (lengthDictionary.get(a.charAt(a.length()-1)));
                 while (secondValues.peek()!=null) {
                     LengthString bNode=secondValues.poll();
                     String b=bNode.label;
+                    System.out.println("Second word: "+b);
                     String secondAnswer=a+", "+b;
                     HashSet<Character> secondLetters=(HashSet<Character>) firstLetters.clone();
                     for (int i=0; i<b.length(); i++) {
@@ -305,10 +312,11 @@ public class Solver {
 //                    }
 //                    thirdDictionary.get(b.charAt(0)).remove(bNode);
                     //third word
-                    PriorityQueue<LengthString> thirdValues=lengthDictionary.get(b.charAt(b.length()-1));
+                    PriorityQueue<LengthString> thirdValues=new PriorityQueue<> (lengthDictionary.get(b.charAt(b.length()-1)));
                     while (thirdValues.peek()!=null) {
                         LengthString cNode=thirdValues.poll();
                         String c=cNode.label;
+                        System.out.println("Third word: "+c);
                         String thirdAnswer=secondAnswer+", "+c;
                         HashSet<Character> thirdLetters=(HashSet<Character>) secondLetters.clone();
                         for (int i=0; i<c.length(); i++) {
@@ -320,9 +328,10 @@ public class Solver {
 //                        }
 //                        fourthDictionary.get(c.charAt(0)).remove(cNode);
                         //fourth word
-                        PriorityQueue<LengthString> fourthValues=lengthDictionary.get(c.charAt(c.length()-1));
+                        PriorityQueue<LengthString> fourthValues=new PriorityQueue<> (lengthDictionary.get(c.charAt(c.length()-1)));
                         while (fourthValues.peek()!=null) {
                             String d=fourthValues.poll().label;
+                            System.out.println("Fourth word: "+d);
                             String fourthAnswer=thirdAnswer+", "+d;
                             HashSet<Character> fourthLetters=(HashSet<Character>) thirdLetters.clone();
                             for (int i=0; i<d.length(); i++) {
@@ -339,17 +348,31 @@ public class Solver {
         return "No Solutions.";
     }
 
-    public void frequencySolve() {
-
+    public void debug() {
+        System.out.println("Better Dictionary.");
+        for (Character k: betterDictionary.keySet()) {
+            LinkedList<String> a=betterDictionary.get(k);
+            while (a.peek()!=null) {
+                System.out.println(a.poll());
+            }
+        }
+        System.out.println("Length Dictionary.");
+        for (Character k: lengthDictionary.keySet()) {
+            PriorityQueue<LengthString> a=lengthDictionary.get(k);
+            while (a.peek()!=null) {
+                System.out.println(a.poll().label);
+            }
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Solver solver = new Solver();
-//        solver.enterLetters();
+        solver.enterLetters();
         solver.load();
         solver.findWords();
 //        System.out.println(solver.betterBruteForceSolve());
         System.out.println(solver.lengthSolve());
+//        solver.debug();
     }
 }
 
